@@ -1,0 +1,225 @@
+              Client
+                 |
+                 |
+          POST /export
+                 |
+                 |
+         Report API
+                 |
+          Publish Job
+                 |
+           RabbitMQ
+        /      |      \
+       /       |       \
+Worker1   Worker2   Worker3
+      \      |      /
+       \     |     /
+      Vendor APIs
+             |
+          Excel
+             |
+             S3
+             |
+          Email
+
+
+
+
+
+Features to Add Later (to make it production-ready)
+Retry mechanism: If a vendor API fails, retry a few times before giving up.
+Dead Letter Queue (DLQ): Move permanently failed jobs to a separate queue for investigation.
+Manual acknowledgments: Acknowledge a message only after the report is successfully generated, uploaded, and emailed.
+Prefetch (QoS): Limit how many messages each worker processes concurrently to avoid overloading downstream services.
+Correlation IDs: Include a request ID in every message for tracing across logs.
+Structured logging: Log each stage (received, processing, uploaded, emailed) with the same request ID.
+Monitoring: Track queue length, processing time, success/failure counts, and worker health using Prometheus/Grafana or similar tools.
+Idempotency: Prevent duplicate reports if the same message is delivered more than once.
+Graceful shutdown: Finish in-progress jobs before stopping workers.
+Config management: Keep RabbitMQ, S3, SMTP, and vendor API settings in configuration files or environment variables.
+
+This project closely matches the architecture you described earlier for your report export service. It teaches the core RabbitMQ concepts—producers, consumers, queues, acknowledgments, retries, and horizontal scaling—while also reflecting a production-grade Go project structure. Once you're comfortable with this, you can directly adapt it so your report export API publishes a job, and background workers handle calling the seven vendor APIs, generating the Excel, uploading it to S3, and sending the email asynchronously.
+
+give me code for all this
+
+Yes, but not in a single ChatGPT response.
+
+The project I described is around 2,500–4,000 lines of Go code with about 30–40 files. It includes:
+
+Gin API
+RabbitMQ producer
+RabbitMQ consumer
+Worker
+Docker Compose
+Config management
+Vendor API layer
+Excel generation
+S3 upload
+Email service
+Logging
+Retry logic
+Dead Letter Queue
+Graceful shutdown
+Unit tests
+
+That is far beyond what fits in one response.
+
+What I can do instead (and what I recommend)
+
+I'll build the project step by step, exactly as if I were mentoring a junior backend developer in a company. By the end, you'll have a complete production-style project that you can run locally and even use as a template at work.
+
+Project we'll build
+report-export-rabbitmq/
+│
+├── cmd/
+│   ├── api/
+│   │   └── main.go
+│   └── worker/
+│       └── main.go
+│
+├── internal/
+│   ├── config/
+│   ├── handler/
+│   ├── model/
+│   ├── router/
+│   ├── rabbitmq/
+│   ├── service/
+│   ├── vendor/
+│   ├── excel/
+│   ├── storage/
+│   ├── email/
+│   └── logger/
+│
+├── pkg/
+│
+├── docker-compose.yml
+│
+├── .env
+│
+├── go.mod
+│
+└── README.md
+We'll implement everything
+
+✅ Gin REST API
+
+✅ RabbitMQ Connection
+
+✅ Producer
+
+✅ Consumer
+
+✅ Worker
+
+✅ Multiple Vendor API Calls
+
+✅ Goroutines
+
+✅ WaitGroup
+
+✅ Retry
+
+✅ Dead Letter Queue
+
+✅ Excel Generation
+
+✅ Upload to S3 (mock first, then real)
+
+✅ Email Sender
+
+✅ Graceful Shutdown
+
+✅ Configuration
+
+✅ Logging
+
+✅ Docker
+
+✅ Unit Tests
+
+Industry-level architecture
+Client
+
+    |
+
+POST /export
+
+    |
+
+Gin API
+
+    |
+
+Publish Job
+
+    |
+
+RabbitMQ
+
+    |
+
+-------------------------
+
+Worker 1
+
+Worker 2
+
+Worker 3
+
+-------------------------
+
+    |
+
+Vendor APIs (7)
+
+    |
+
+Generate Excel
+
+    |
+
+Upload S3
+
+    |
+
+Send Email
+
+    |
+
+Done
+
+You'll also learn:
+
+Why acknowledgments matter.
+How retries prevent data loss.
+How prefetch limits avoid overloading vendors.
+How to scale workers horizontally.
+I suggest turning this into a complete course
+
+We'll do it in about 12 lessons:
+
+Project setup
+RabbitMQ basics
+Producer
+Consumer
+Worker
+Vendor APIs (concurrent calls)
+Excel generation
+S3 upload
+Email service
+Retry & Dead Letter Queue
+Docker deployment
+Production improvements (logging, metrics, graceful shutdown)
+
+Each lesson will contain:
+
+Complete source code
+Folder structure
+Explanation of every file
+Why it's written that way
+Common interview questions
+Industry best practices
+
+By the end, you'll have a real project you can confidently explain in interviews and adapt to your current report-export system.
+
+This is the only practical way to provide the full implementation without overwhelming you or exceeding the response size limits.
